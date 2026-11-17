@@ -1,0 +1,13 @@
+.git
+.venv
+**/__pycache__
+.mypy_cache
+.pytest_cache
+.ruff_cache
+# Settings and secrets reach the container as environment variables, never as files.
+.env*
+environment
+# Lambdas deploy on their own.
+lambdas
+# The reasons scripts/rules.py asks for are for reviewers, not the image.
+commits

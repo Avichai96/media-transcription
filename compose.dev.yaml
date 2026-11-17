@@ -1,0 +1,24 @@
+services:
+  app:
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app/src
+    volumes:
+      - ./src:/app/src:ro
+    develop:
+      watch:
+        - action: rebuild
+          path: ./environment/local
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+        - action: rebuild
+          path: ./Dockerfile

@@ -1,0 +1,22 @@
+# The app: uv run local-run --build
+# Set APP_PORT to publish the app on another host port.
+services:
+  app:
+    build: .
+    # The local settings and secrets, with hosts and ports below swapped for the services here.
+    env_file:
+      - environment/local/local.config.env
+      - environment/local/local.secret.env
+    ports:
+      - "127.0.0.1:${APP_PORT:-8000}:8000"
+    volumes:
+      - models:/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 120s
+      timeout: 5s
+      start_period: 120s
+      retries: 3
+
+volumes:
+  models:

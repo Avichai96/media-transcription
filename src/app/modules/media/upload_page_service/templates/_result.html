@@ -1,0 +1,18 @@
+<article class="card result" aria-labelledby="result-title">
+  <header class="result-head">
+    <h2 id="result-title">Transcript</h2>
+    <div class="meta">
+      <span class="badge" title="Language used for transcription">{{ language | upper }}</span>
+      {% if text %}<span class="muted">{{ text.split() | length }} words</span>{% endif %}
+    </div>
+  </header>
+  {% if text %}
+  <p class="transcript" id="transcript" dir="auto">{{ text }}</p>
+  <div class="actions">
+    <button type="button" class="btn secondary" data-action="copy">Copy text</button>
+    <button type="button" class="btn secondary" data-action="download" data-filename="{{ filename or 'transcript' }}">Download .txt</button>
+  </div>
+  {% else %}
+  <p class="empty">No speech was detected in this file.</p>
+  {% endif %}
+</article>

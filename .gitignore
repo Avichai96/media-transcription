@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Each environment's secrets stay out of git, but the local ones are throwaway values compose.yaml shares.
+environment/*/*.secret.env
+!environment/local/local.secret.env
+
+.DS_Store
+.ruff_cache/
+.mypy_cache/
+
+tests/golden/.cache/

@@ -1,0 +1,12 @@
+# `uv run pre-commit install` makes git run `uv run format` before each commit.
+# A commit stops when the hook fails or changes a file; stage the fixes and commit again.
+minimum_pre_commit_version: "4.4.0"
+repos:
+  - repo: local
+    hooks:
+      - id: format
+        name: ruff and pylint (uv run format)
+        entry: uv run format
+        language: unsupported
+        pass_filenames: false
+        types_or: [python, pyi]

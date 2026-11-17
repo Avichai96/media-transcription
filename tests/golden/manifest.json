@@ -1,0 +1,95 @@
+{
+  "model": {
+    "repository": "Systran/faster-whisper-small",
+    "revision": "536b0662742c02347bc0e980a01041f333bce120",
+    "device": "cpu",
+    "compute_type": "int8",
+    "cpu_threads": 4
+  },
+  "cases": [
+    {
+      "file": "jfk.flac",
+      "language": "en",
+      "reference": "And so my fellow Americans ask not what your country can do for you ask what you can do for your country",
+      "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "max_wer": 0.15,
+      "id": "jfk",
+      "modes": [
+        "explicit",
+        "auto"
+      ],
+      "gate": true
+    },
+    {
+      "file": "he-567161.mp3",
+      "language": "he",
+      "reference": "לפני זמן רב היה שם גשר",
+      "url": "https://tatoeba.org/en/audio/download/567161",
+      "sha256": "7146afd9eb63decd2148df6f8bcbe39abe2a2a68c6718cc7d259ea4c9b072502",
+      "max_wer": 0.2,
+      "id": "he-567161",
+      "modes": [
+        "explicit",
+        "auto"
+      ],
+      "gate": true
+    },
+    {
+      "id": "he-238678",
+      "file": "he-238678.mp3",
+      "language": "he",
+      "reference": "את ותום חוזרים אחד אל השני",
+      "url": "https://tatoeba.org/en/audio/download/238678",
+      "sha256": "b00d95469f37cab97469eff5d45c769b288cf0fd3ef5b51712754e4845d209b7",
+      "max_wer": 0.2,
+      "gate": true,
+      "modes": [
+        "explicit",
+        "auto"
+      ]
+    },
+    {
+      "id": "he-238623",
+      "file": "he-238623.mp3",
+      "language": "he",
+      "reference": "אני רוצה לשחק איתך טניס ביום כלשהו",
+      "url": "https://tatoeba.org/en/audio/download/238623",
+      "sha256": "207cade875311747aea0e27acc3dbeb28760f9cf6104aff7b08e29f3a3227b42",
+      "max_wer": 0.3,
+      "gate": true,
+      "modes": [
+        "explicit",
+        "auto"
+      ]
+    },
+    {
+      "id": "he-238677",
+      "file": "he-238677.mp3",
+      "language": "he",
+      "reference": "תום מאזין לאייפוד שלו",
+      "url": "https://tatoeba.org/en/audio/download/238677",
+      "sha256": "1d6f97aa181d1d26eea7dd4ab108ce82ceee988e84b89771db9e228e6ee2b7e1",
+      "max_wer": 0.25,
+      "gate": false,
+      "modes": [
+        "explicit",
+        "auto"
+      ]
+    },
+    {
+      "id": "he-wikimedia",
+      "file": "he-wikimedia.ogg",
+      "language": "he",
+      "reference": "הן אמרו אמרתי אמירה אמירה לא אמרתי כי אם אמרתי אמירה טוב אמרתי האמירה אם האמירה אמרתי לי",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/He-US-dicho-saying.ogg",
+      "sha256": "0d9cac94dc639364118f564dcee9ae83beccf5bded4be546f960f9471577c51d",
+      "max_wer": 0.25,
+      "gate": false,
+      "modes": [
+        "explicit",
+        "auto"
+      ]
+    }
+  ]
+}

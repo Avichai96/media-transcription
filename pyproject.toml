@@ -1,0 +1,179 @@
+[project]
+name = "media-transcription"
+version = "0.1.0"
+description = "Upload a media file and get a transcription from a local Whisper model."
+readme = "README.md"
+authors = [
+    { name = "AvichaiCohen", email = "avico1570@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "av==18.1.0",
+    "fastapi[standard]>=0.163.1",
+    "faster-whisper==1.2.1",
+    "pydantic-settings>=2.16.3",
+    "sqlmodel>=0.0.50",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# `uv run <name>` from anywhere in the project; each runs a function in scripts/.
+[project.scripts]
+local-build = "scripts.local:build"
+local-run = "scripts.local:run"
+local-dev = "scripts.local:dev"
+local-debug = "scripts.local:debug"
+format = "scripts.format:main"
+
+# Hatchling packages the app and the scripts behind the commands above.
+[tool.hatch.build.targets.wheel]
+packages = ["src/app", "scripts"]
+
+[tool.uv]
+# ONNX Runtime no longer ships Intel macOS wheels in its newest releases.
+required-environments = ["sys_platform == 'darwin' and platform_machine == 'x86_64'"]
+
+[tool.fastapi]
+entrypoint = "app.main:app"
+
+[tool.fastforge]
+package = "app"
+orm = "sqlmodel"
+migrations = false
+
+[[tool.mypy.overrides]]
+# The published faster-whisper wheel has no py.typed marker or stubs.
+module = ["faster_whisper", "faster_whisper.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "F",     # Pyflakes: unused names, undefined names
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "I",     # import order
+    "N",     # PEP 8 naming
+    "D",     # docstrings: summary line, imperative mood, no "This ..."
+    "UP",    # the syntax and typing of the Python in requires-python
+    "FAST",  # FastAPI: Annotated dependencies, no redundant response_model
+    "ASYNC", # blocking calls inside async functions
+    "TID",   # the banned APIs below, and no imports from parent packages
+    "INP",   # every source directory is a package
+    "C90",   # McCabe complexity
+    "PL",    # Pylint: too many arguments, branches, returns and statements
+    "B",     # likely bugs
+    "A",     # shadowed builtins
+    "C4",    # comprehensions
+    "SIM",   # simpler forms
+    "RET",   # return statements
+    "PIE",   # unnecessary code
+    "PTH",   # pathlib over os.path
+    "DTZ",   # timezone-aware datetimes
+    "T20",   # print calls
+    "S",     # security
+    "BLE",   # blind except
+    "TRY",   # try/except: raise from, no try around a raise, return after the try
+    "LOG",   # logging
+    "G",     # logging format strings
+    "PERF",  # performance
+    "FURB",  # modern idioms
+    "ERA",   # commented-out code
+    "RUF",   # Ruff's own rules
+]
+ignore = [
+    # Every class needs a docstring; modules and functions need one when their
+    # names don't say enough, and D2xx to D4xx shape every docstring written.
+    "D100",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D107",
+    "D203",  # D211 wins: no blank line before a class docstring
+    "D213",  # D212 wins: the summary starts on the first line
+    "D215",  # D215 to D409 are NumPy-style sections; these are Google-style
+    "D406",
+    "D407",
+    "D408",
+    "D409",
+    "D413",
+    "TRY003",  # an error's message may name what failed, e.g. the id not found
+]
+# scripts/rules.py checks FF001 to FF003, so ruff keeps their noqa comments.
+external = ["FF"]
+
+# ERA001 skips comments that open with a task tag.
+task-tags = ["TODO", "FIXME", "XXX"]
+
+[tool.ruff.lint.per-file-ignores]
+# models.py imports each service's model only to register its table; this ignore
+# holds before the first one too, where a noqa comment would trip RUF100.
+"src/app/models.py" = ["F401"]
+"migrations/**" = ["INP001"]
+# Alembic writes the revisions, with the message as the docstring's summary.
+"migrations/versions/*" = ["D", "E501"]
+# Beanie writes its migrations from a template with no docstrings.
+"migrations/mongo/*" = ["D"]
+# A Lambda ships without the app's settings, so it reads os.environ itself.
+"lambdas/**" = ["TID251"]
+# The scripts run fixed commands: docker and git from PATH, and ruff and pylint on
+# this Python; rules.py prints what it finds, as ruff does.
+"scripts/**" = ["S603", "S606", "S607"]
+"scripts/rules.py" = ["T201"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"os.environ".msg = "Read settings through an EnvSettings class in a config.py."
+"os.getenv".msg = "Read settings through an EnvSettings class in a config.py."
+"pydantic.v1".msg = "The Pydantic 1 API; use pydantic."
+"pydantic.validator".msg = "Pydantic 1; use pydantic.field_validator."
+"pydantic.root_validator".msg = "Pydantic 1; use pydantic.model_validator."
+"pydantic.parse_obj_as".msg = "Pydantic 1; use pydantic.TypeAdapter."
+"pydantic.Extra".msg = "Pydantic 1; set extra= in ConfigDict."
+"pydantic.BaseSettings".msg = "Pydantic 1; use pydantic_settings.BaseSettings."
+"sqlalchemy.ext.declarative".msg = "SQLAlchemy 1; subclass sqlalchemy.orm.DeclarativeBase."
+"sqlalchemy.orm.declarative_base".msg = "SQLAlchemy 1; subclass sqlalchemy.orm.DeclarativeBase."
+"sqlalchemy.orm.Query".msg = "SQLAlchemy 1; use select() with Session.execute()."
+"asyncio.get_event_loop".msg = "Deprecated; use asyncio.get_running_loop()."
+"aioredis".msg = "Merged into redis; use redis.asyncio."
+"pkg_resources".msg = "Deprecated; use importlib.metadata or importlib.resources."
+
+# Ruff runs every other check; pylint adds the two it lacks. `uv run format` runs both.
+[tool.pylint.main]
+recursive = true
+
+[tool.pylint."messages control"]
+disable = ["all"]
+enable = ["duplicate-code", "too-many-lines"]
+
+[tool.pylint.format]
+max-module-lines = 800
+
+[tool.pylint.similarities]
+# Imports, signatures, docstrings and comments may repeat; the code between them may
+# not, past 15 lines. Scaffolded services repeat up to 11, such as each model's columns.
+min-similarity-lines = 15
+ignore-imports = true
+ignore-signatures = true
+ignore-docstrings = true
+ignore-comments = true
+
+[tool.pylint.reports]
+score = false
+
+[dependency-groups]
+debug = [
+    "debugpy>=1.8.22",
+]
+dev = [
+    "pre-commit>=4.7.0",
+    "pylint>=4.1.4",
+    "ruff>=0.17.5",
+]
